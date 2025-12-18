@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Learn | 韓語互動學習網</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --k-pink: #ffafbd;
+            --k-accent: #ff8a9a;
+            --k-bg: #fffafb;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans KR', 'Noto Sans TC', sans-serif; background-color: var(--k-bg); color: #444; scroll-behavior: smooth; }
+
+        /* 導覽列 */
+        nav {
+            position: fixed; width: 100%; top: 0; background: rgba(255,255,255,0.95);
+            padding: 15px 10%; display: flex; justify-content: space-between;
+            z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .logo { font-weight: bold; color: var(--k-accent); font-size: 1.5rem; }
+        nav ul { display: flex; list-style: none; }
+        nav ul li { margin-left: 20px; }
+        nav ul li a { text-decoration: none; color: #666; font-weight: bold; }
+
+        /* 英雄區 (Hero Section) - 強化版 */
+        .hero {
+            height: 100vh; 
+            background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero h1 { 
+            font-size: 8rem; /* 極大化韓文字 */
+            font-weight: 900; 
+            margin-bottom: 10px;
+            letter-spacing: -2px;
+            text-shadow: 4px 4px 0px rgba(255, 138, 154, 0.4); /* 立體陰影 */
+            animation: fadeInDown 1.2s ease-out;
+        }
+
+        .hero p { 
+            font-size: 1.8rem; 
+            font-weight: 400;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        .hero .cta-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background: white;
+            color: var(--k-accent);
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            animation: fadeIn 2s ease-in;
+        }
+
+        .hero .cta-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* 內容區塊 */
+        .section { padding: 100px 10%; text-align: center; }
+        .vocab-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px; margin-top: 40px; }
+        
+        .vocab-card { height: 320px; perspective: 1000px; cursor: pointer; }
+        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+        .vocab-card:hover .card-inner { transform: rotateY(180deg); }
+        
+        .card-front, .card-back {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            border-radius: 20px; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 2px solid #eee;
+        }
+        .card-back { background: var(--k-pink); color: white; transform: rotateY(180deg); }
+
+        .card-img { width: 140px; height: 140px; margin-bottom: 15px; border-radius: 15px; overflow: hidden; background: #f9f9f9; border: 1px solid #eee; }
+        .card-img img { width: 100%; height: 100%; object-fit: cover; }
+        .kr-text { font-size: 2.2rem; font-weight: bold; color: var(--k-accent); }
+
+        .video-container { max-width: 800px; margin: 40px auto; aspect-ratio: 16/9; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .video-container iframe { width: 100%; height: 100%; }
+
+        #p5-container { width: 600px; height: 400px; margin: 20px auto; border-radius: 20px; border: 8px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.05); background: white; position: relative; }
+        .game-controls { margin-bottom: 20px; }
+        .game-btn { padding: 12px 24px; border: none; background: var(--k-accent); color: white; border-radius: 12px; cursor: pointer; margin: 5px; font-weight: bold; transition: 0.2s; }
+        
+        .score-box { font-size: 1.8rem; font-weight: bold; margin: 20px 0; color: var(--k-accent); }
+        .feedback { font-weight: bold; min-height: 28px; color: #555; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">K-Learn.</div>
+        <ul>
+            <li><a href="#home">首頁</a></li>
+            <li><a href="#vocab">單字卡</a></li>
+            <li><a href="#video">影片</a></li>
+            <li><a href="#game">挑戰</a></li>
+        </ul>
+    </nav>
+
+    <header id="home" class="hero">
+        <h1>안녕하세요</h1>
+        <p>探索韓文的有趣世界</p>
+        <a href="#vocab" class="cta-btn">立即開始學習</a>
+    </header>
+
+    <section id="vocab" class="section">
+        <h2 style="font-size: 2.5rem; color: var(--k-accent);">基礎生活單字</h2>
+        <div class="vocab-grid">
+            <div class="vocab-card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="card-img"><img src="images/apple.jpg" alt="蘋果"></div>
+                        <span class="kr-text">사과</span>
+                    </div>
+                    <div class="card-back"><h2>蘋果</h2><p>Sa-gwa</p></div>
+                </div>
+            </div>
+            <div class="vocab-card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="card-img"><img src="images/milk.jpg" alt="牛奶"></div>
+                        <span class="kr-text">우유</span>
+                    </div>
+                    <div class="card-back"><h2>牛奶</h2><p>U-yu</p></div>
+                </div>
+            </div>
+            <div class="vocab-card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="card-img"><img src="images/banana.jpg" alt="香蕉"></div>
+                        <span class="kr-text">바나나</span>
+                    </div>
+                    <div class="card-back"><h2>香蕉</h2><p>Ba-na-na</p></div>
+                </div>
+            </div>
+            <div class="vocab-card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="card-img"><img src="images/bread.jpg" alt="麵包"></div>
+                        <span class="kr-text">빵</span>
+                    </div>
+                    <div class="card-back"><h2>麵包</h2><p>Ppang</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="video" class="section" style="background: #fdf2f4;">
+        <h2 style="font-size: 2.5rem; color: var(--k-accent);">影音教學</h2>
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/gCAaO9Gy6dQ?si=7q4fO6ssgHL9xcls" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </section>
+
+    <section id="game" class="section">
+        <h2 style="font-size: 2.5rem; color: var(--k-accent);">成果測驗遊戲</h2>
+        <div class="game-controls">
+            <button class="game-btn" onclick="startFallingGame()">模式一：單字接接樂</button>
+            <button class="game-btn" onclick="startMemoryGame()">模式二：記憶翻牌</button>
+        </div>
+        
+        <div id="p5-container"></div>
+        
+        <div class="score-box">得分：<span id="score-val">0</span></div>
+        <div id="game-feedback" class="feedback">達到 100 分會有浮誇煙火驚喜！</div>
+    </section>
+
+    <footer style="padding: 50px; text-align: center; background: #444; color: white;">
+        <p>© 2025 K-Learn Project | 大發 (대박)!</p>
+    </footer>
+
+    <script>
+        let score = 0;
+        let mode = 0; 
+        let words = [
+            { kr: "사과", cn: "蘋果" },
+            { kr: "우유", cn: "牛奶" },
+            { kr: "바나나", cn: "香蕉" },
+            { kr: "빵", cn: "麵包" }
+        ];
+
+        let targetWord;
+        let drops = [];
+        let cards = [];
+        let flippedCards = [];
+        let particles = []; 
+
+        function setup() {
+            let cnv = createCanvas(600, 400);
+            cnv.parent('p5-container');
+            textAlign(CENTER, CENTER);
+        }
+
+        function draw() {
+            background(255);
+            
+            if (mode === 1) {
+                drawFalling();
+            } else if (mode === 2) {
+                drawMemory();
+            } else {
+                fill(180); textSize(22); text("請選擇上方遊戲模式", width/2, height/2);
+            }
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].show();
+                if (particles[i].finished()) particles.splice(i, 1);
+            }
+        }
+
+        // --- 浮誇粒子類別 ---
+        class Particle {
+            constructor(x, y, type, colorObj) {
+                this.x = x;
+                this.y = y;
+                this.type = type;
+                this.vx = random(-4, 4);
+                this.vy = random(-6, 3);
+                this.alpha = 255;
+                this.color = colorObj || color(random(255), random(150, 255), random(150, 255));
+                this.size = type === 'confetti' ? random(6, 12) : random(4, 8);
+                this.rotation = random(TWO_PI);
+                this.rotVel = random(-0.1, 0.1);
+            }
+            finished() { return this.alpha < 0; }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.15; // 重力
+                this.alpha -= 3;
+                this.rotation += this.rotVel;
+            }
+            show() {
+                push();
+                translate(this.x, this.y);
+                rotate(this.rotation);
+                noStroke();
+                let c = this.color;
+                fill(red(c), green(c), blue(c), this.alpha);
+                if (this.type === 'confetti') {
+                    rect(-this.size/2, -this.size/2, this.size, this.size);
+                } else {
+                    ellipse(0, 0, this.size);
+                }
+                pop();
+            }
+        }
+
+        function triggerMegaConfetti() {
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle(random(width), -20, 'confetti'));
+            }
+        }
+
+        function triggerMegaFirework() {
+            let startX = random(100, 500);
+            let startY = random(100, 250);
+            let baseColor = color(random(200, 255), random(100, 255), random(100, 255));
+            for (let i = 0; i < 100; i++) {
+                let p = new Particle(startX, startY, 'firework', baseColor);
+                let angle = random(TWO_PI);
+                let speed = random(2, 10);
+                p.vx = cos(angle) * speed;
+                p.vy = sin(angle) * speed;
+                particles.push(p);
+            }
+        }
+
+        // --- 遊戲邏輯 ---
+        function startFallingGame() { mode = 1; score = 0; updateUI(); pickNewTarget(); drops = []; particles = []; }
+        function pickNewTarget() { targetWord = random(words); setFeedback("請點擊韓文單字：「" + targetWord.cn + "」"); }
+
+        function drawFalling() {
+            fill(80); textSize(22); text("尋找題目：" + targetWord.cn, width/2, 40);
+            stroke(240); line(50, 65, 550, 65);
+            if (frameCount % 60 === 0) {
+                let w = random(words);
+                drops.push({ txt: w.kr, x: random(50, 550), y: -20, speed: random(1.5, 3) });
+            }
+            for (let i = drops.length - 1; i >= 0; i--) {
+                let d = drops[i]; d.y += d.speed;
+                fill(255, 175, 189); noStroke(); ellipse(d.x, d.y, 75, 75);
+                fill(255); textSize(20); text(d.txt, d.x, d.y);
+                if (d.y > height + 50) drops.splice(i, 1);
+            }
+        }
+
+        function startMemoryGame() {
+            mode = 2; score = 0; updateUI(); cards = []; flippedCards = [];
+            let deck = [...words, ...words].sort(() => Math.random() - 0.5);
+            for (let i = 0; i < 8; i++) {
+                cards.push({ txt: deck[i].kr, x: 100 + (i%4)*130, y: 130 + Math.floor(i/4)*150, flipped: false, matched: false });
+            }
+            setFeedback("翻開卡片，找出成對的單字！");
+            particles = [];
+        }
+
+        function drawMemory() {
+            cards.forEach(c => {
+                if (c.flipped || c.matched) {
+                    fill(255, 230, 235); rect(c.x-50, c.y-60, 100, 120, 15);
+                    fill(255, 138, 154); textSize(20); text(c.txt, c.x, c.y);
+                } else {
+                    fill(230); rect(c.x-50, c.y-60, 100, 120, 15);
+                    fill(255); textSize(30); text("?", c.x, c.y);
+                }
+            });
+            if (cards.every(c => c.matched) && score >= 100 && frameCount % 20 === 0) triggerMegaFirework();
+        }
+
+        function mousePressed() {
+            if (mode === 1) {
+                for (let i = drops.length - 1; i >= 0; i--) {
+                    let d = drops[i];
+                    if (dist(mouseX, mouseY, d.x, d.y) < 38) {
+                        if (d.txt === targetWord.kr) {
+                            score += 20;
+                            if (score >= 100) { triggerMegaConfetti(); triggerMegaFirework(); setFeedback("大發！超級韓文王！"); }
+                            else pickNewTarget();
+                        } else { score = max(0, score - 10); setFeedback("答錯囉，加油！"); }
+                        drops.splice(i, 1); updateUI();
+                    }
+                }
+            } else if (mode === 2) {
+                cards.forEach(c => {
+                    if (!c.flipped && !c.matched && mouseX > c.x-50 && mouseX < c.x+50 && mouseY > c.y-60 && mouseY < c.y+60) {
+                        if (flippedCards.length < 2) {
+                            c.flipped = true; flippedCards.push(c);
+                            if (flippedCards.length === 2) setTimeout(checkMatch, 800);
+                        }
+                    }
+                });
+            }
+        }
+
+        function checkMatch() {
+            if (flippedCards[0].txt === flippedCards[1].txt) {
+                flippedCards[0].matched = true; flippedCards[1].matched = true;
+                score += 50; if (score >= 100) { triggerMegaFirework(); triggerMegaFirework(); }
+                setFeedback("配對成功！+50");
+            } else { flippedCards[0].flipped = false; flippedCards[1].flipped = false; setFeedback("不對喔，加油！"); }
+            flippedCards = []; updateUI();
+        }
+
+        function updateUI() { document.getElementById('score-val').innerText = score; }
+        function setFeedback(msg) { document.getElementById('game-feedback').innerText = msg; }
+    </script>
+</body>
+</html>
