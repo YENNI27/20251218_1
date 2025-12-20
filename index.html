@@ -6,7 +6,6 @@
     <title>K-Learn | 韓語互動學習網</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
-    
     <style>
         :root { --k-pink: #ffafbd; --k-accent: #ff8a9a; --k-bg: #fffafb; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -38,28 +37,15 @@
     </style>
 </head>
 <body>
-
-    <nav>
-        <div class="logo">K-Learn.</div>
-        <ul>
-            <li><a href="#home">首頁</a></li>
-            <li><a href="#vocab">單字卡</a></li>
-            <li><a href="#video">影片</a></li>
-            <li><a href="#game">挑戰</a></li>
-        </ul>
-    </nav>
-
-    <header id="home" class="hero">
-        <h1>안녕하세요</h1>
-        <p>圖片與單字配對挑戰</p>
-    </header>
+    <nav><div class="logo">K-Learn.</div><ul><li><a href="#home">首頁</a></li><li><a href="#vocab">單字卡</a></li><li><a href="#video">影片</a></li><li><a href="#game">挑戰</a></li></ul></nav>
+    <header id="home" class="hero"><h1>안녕하세요</h1><p>全方位韓文互動挑戰</p></header>
 
     <section id="vocab" class="section">
         <h2 style="font-size: 2.5rem; color: var(--k-accent);">基礎生活單字</h2>
         <div class="vocab-grid">
             <div class="vocab-card"><div class="card-inner"><div class="card-front"><div class="card-img"><img src="images/apple.jpg"></div><span class="kr-text">사과</span></div><div class="card-back"><h2>蘋果</h2><p>Sa-gwa</p></div></div></div>
             <div class="vocab-card"><div class="card-inner"><div class="card-front"><div class="card-img"><img src="images/milk.jpg"></div><span class="kr-text">우유</span></div><div class="card-back"><h2>牛奶</h2><p>U-yu</p></div></div></div>
-            <div class="vocab-card"><div class="card-inner"><div class="card-front"><div class="card-img"><img src="images/banana.jpg"></div><span class="kr-text">바나나</span></div><div class="card-back"><h2>香蕉</h2><p>Ba-na-na</p></div></div></div>
+            <div class="vocab-card"><div class="card-inner"><div class="card-front"><div class="card-img"><img src="images/banana.jpg"></div><span class="kr-text">바那나</span></div><div class="card-back"><h2>香蕉</h2><p>Ba-na-na</p></div></div></div>
             <div class="vocab-card"><div class="card-inner"><div class="card-front"><div class="card-img"><img src="images/bread.jpg"></div><span class="kr-text">빵</span></div><div class="card-back"><h2>麵包</h2><p>Ppang</p></div></div></div>
             <div class="vocab-card"><div class="card-inner"><div class="card-front"><div class="card-img"><img src="images/kimbap.jpg"></div><span class="kr-text">김밥</span></div><div class="card-back"><h2>飯捲</h2><p>Gim-bap</p></div></div></div>
             <div class="vocab-card"><div class="card-inner"><div class="card-front"><div class="card-img"><img src="images/kimchi.jpg"></div><span class="kr-text">김치</span></div><div class="card-back"><h2>泡菜</h2><p>Gim-chi</p></div></div></div>
@@ -68,26 +54,20 @@
 
     <section id="video" class="section" style="background: #fdf2f4;">
         <h2 style="font-size: 2.5rem; color: var(--k-accent);">影音教學</h2>
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/0SInat79-24" frameborder="0" allowfullscreen></iframe>
-        </div>
+        <div class="video-container"><iframe src="https://www.youtube.com/embed/0SInat79-24" frameborder="0" allowfullscreen></iframe></div>
     </section>
 
     <section id="game" class="section">
         <h2 style="font-size: 2.5rem; color: var(--k-accent);">成果測驗遊戲</h2>
         <div class="game-controls">
             <button class="game-btn" onclick="startFallingGame()">模式一：接接樂</button>
-            <button class="game-btn" onclick="startMemoryGame()">模式二：圖文配對挑戰</button>
-            <button class="game-btn" onclick="startPuzzleGame()">模式三：單字拼拼樂</button>
+            <button class="game-btn" onclick="startMemoryGame()">模式二：圖文配對</button>
+            <button class="game-btn" onclick="startPuzzleGame()">模式三：拼字挑戰</button>
         </div>
         <div id="p5-container"></div>
         <div class="score-box">得分：<span id="score-val">0</span></div>
-        <div id="game-feedback" class="feedback">挑戰 100 分獲得浮誇大煙火！</div>
+        <div id="game-feedback" class="feedback">達到 100 分觸發超級煙火！</div>
     </section>
-
-    <footer style="padding: 50px; text-align: center; background: #444; color: white;">
-        <p>© 2025 K-Learn Project | 大發 (대박)!</p>
-    </footer>
 
     <script>
         let score = 0, mode = 0, words = [
@@ -100,100 +80,105 @@
         ];
         let targetWord, drops = [], cards = [], flippedCards = [], particles = [], puzzleOptions = [], puzzleProgress = "", loadedImages = {};
 
-        function preload() {
-            words.forEach(w => {
-                loadedImages[w.imgName] = loadImage('images/' + w.imgName + '.jpg');
-            });
-        }
-
+        function preload() { words.forEach(w => loadedImages[w.imgName] = loadImage('images/' + w.imgName + '.jpg')); }
         function setup() { let cnv = createCanvas(600, 400); cnv.parent('p5-container'); textAlign(CENTER, CENTER); }
+        
         function draw() {
             background(255);
             if (mode === 1) drawFalling();
             else if (mode === 2) drawMemory();
             else if (mode === 3) drawPuzzle();
-            else { fill(180); textSize(22); text("請選擇上方遊戲模式", width/2, height/2); }
+            else { fill(180); textSize(22); text("請選擇遊戲開始挑戰", width/2, height/2); }
             for (let i = particles.length - 1; i >= 0; i--) { particles[i].update(); particles[i].show(); if (particles[i].finished()) particles.splice(i, 1); }
         }
 
         class Particle {
-            constructor(x, y, type, c) { this.x = x; this.y = y; this.type = type; this.vx = random(-6, 6); this.vy = random(-10, 2); this.alpha = 255; this.color = c || color(random(255), random(150, 255), random(150, 255)); this.size = random(8, 15); this.rotation = random(TWO_PI); }
+            constructor(x, y, c) { this.x = x; this.y = y; this.vx = random(-7, 7); this.vy = random(-12, 3); this.alpha = 255; this.color = c || color(random(255), 150, 200); this.size = random(8, 16); }
+            update() { this.x += this.vx; this.y += this.vy; this.vy += 0.25; this.alpha -= 3; }
+            show() { noStroke(); fill(red(this.color), green(this.color), blue(this.color), this.alpha); ellipse(this.x, this.y, this.size); }
             finished() { return this.alpha < 0; }
-            update() { this.x += this.vx; this.y += this.vy; this.vy += 0.2; this.alpha -= 3; this.rotation += 0.1; }
-            show() { push(); translate(this.x, this.y); rotate(this.rotation); noStroke(); fill(red(this.color), green(this.color), blue(this.color), this.alpha); if (this.type === 'confetti') rect(0,0,this.size,this.size); else ellipse(0,0,this.size); pop(); }
         }
 
-        function triggerMegaFirework() { let sx = random(100, 500), sy = random(100, 250), col = color(random(255), random(100, 255), random(100, 255)); for (let i = 0; i < 150; i++) { let p = new Particle(sx, sy, 'firework', col); let ang = random(TWO_PI), spd = random(3, 15); p.vx = cos(ang) * spd; p.vy = sin(ang) * spd; particles.push(p); } }
-        
-        // 模式一：接接樂
+        function triggerMegaFirework() { let sx = random(100, 500), sy = random(100, 200), col = color(random(255), 100, 200); for (let i = 0; i < 150; i++) { let p = new Particle(sx, sy, col); let ang = random(TWO_PI), spd = random(4, 15); p.vx = cos(ang) * spd; p.vy = sin(ang) * spd; particles.push(p); } }
+
+        // --- 遊戲一：接接樂 ---
         function startFallingGame() { mode = 1; score = 0; updateUI(); pickNewTarget(); drops = []; particles = []; }
-        function pickNewTarget() { targetWord = random(words); setFeedback("尋找韓文：「" + targetWord.cn + "」"); }
-        function drawFalling() { fill(80); textSize(22); text("目標：" + targetWord.cn, width/2, 40); if (frameCount % 60 === 0) { let w = random(words); drops.push({ txt: w.kr, x: random(50, 550), y: -20, speed: random(1.5, 3.5) }); } for (let i = drops.length - 1; i >= 0; i--) { let d = drops[i]; d.y += d.speed; fill(255, 175, 189); ellipse(d.x, d.y, 80, 80); fill(255); textSize(20); text(d.txt, d.x, d.y); if (d.y > height + 50) drops.splice(i, 1); } }
-        
-        // 模式二：圖文配對挑戰
+        function pickNewTarget() { targetWord = random(words); setFeedback("尋找：「" + targetWord.cn + "」"); }
+        function drawFalling() {
+            fill(80); textSize(24); text("目標：" + targetWord.cn, width/2, 40);
+            if (frameCount % 60 === 0) { let w = random(words); drops.push({ txt: w.kr, x: random(50, 550), y: -20, speed: random(2, 4) }); }
+            drops.forEach((d, i) => {
+                d.y += d.speed; fill(255, 175, 189); ellipse(d.x, d.y, 85, 85);
+                fill(255); textSize(20); text(d.txt, d.x, d.y);
+                if (d.y > height + 50) drops.splice(i, 1);
+            });
+        }
+
+        // --- 遊戲二：圖文配對消消樂 ---
         function startMemoryGame() {
             mode = 2; score = 0; updateUI(); cards = []; flippedCards = [];
-            let selectedWords = [...words].sort(() => Math.random() - 0.5).slice(0, 4);
+            let pool = [...words].sort(() => Math.random() - 0.5).slice(0, 4);
             let deck = [];
-            // 生成一張圖、一張韓文單字
-            selectedWords.forEach(w => {
-                deck.push({ type: 'img', val: w.imgName, matchId: w.kr });
-                deck.push({ type: 'txt', val: w.kr, matchId: w.kr });
-            });
+            pool.forEach(w => { deck.push({ type: 'img', val: w.imgName, match: w.kr }); deck.push({ type: 'txt', val: w.kr, match: w.kr }); });
             deck.sort(() => Math.random() - 0.5);
-            for (let i = 0; i < 8; i++) {
-                cards.push({ ...deck[i], x: 100 + (i%4)*130, y: 130 + Math.floor(i/4)*150, flipped: false, matched: false });
-            }
+            for (let i = 0; i < 8; i++) cards.push({ ...deck[i], x: 100 + (i%4)*130, y: 130 + Math.floor(i/4)*150, flipped: false, matched: false });
             setFeedback("將圖片與正確的韓文單字配對！");
         }
         function drawMemory() {
             cards.forEach(c => {
                 if (c.flipped || c.matched) {
                     fill(255, 230, 235); rect(c.x-50, c.y-60, 100, 120, 15);
-                    if (c.type === 'img') {
-                        imageMode(CENTER);
-                        image(loadedImages[c.val], c.x, c.y, 80, 80);
-                    } else {
-                        fill(255, 138, 154); textSize(20); text(c.val, c.x, c.y);
-                    }
-                } else { fill(230); rect(c.x-50, c.y-60, 100, 120, 15); fill(255); textSize(30); text("?", c.x, c.y); }
+                    if (c.type === 'img') image(loadedImages[c.val], c.x, c.y, 80, 80);
+                    else { fill(255, 138, 154); textSize(22); text(c.val, c.x, c.y); }
+                } else { fill(230); rect(c.x-50, c.y-60, 100, 120, 15); fill(255); textSize(35); text("?", c.x, c.y); }
             });
-            if (cards.every(c => c.matched) && score >= 100 && frameCount % 10 === 0) triggerMegaFirework();
+            if (cards.every(c => c.matched) && score >= 100 && frameCount % 15 === 0) triggerMegaFirework();
         }
 
-        // 模式三：單字拼拼樂
+        // --- 遊戲三：拼字挑戰 ---
         function startPuzzleGame() { mode = 3; score = 0; updateUI(); pickNewPuzzle(); }
-        function pickNewPuzzle() { targetWord = random(words); puzzleProgress = ""; puzzleOptions = targetWord.kr.split('').map((char, i) => ({ char, x: 0, y: 300, clicked: false })); puzzleOptions.sort(() => Math.random() - 0.5); puzzleOptions.forEach((o, i) => o.x = 100 + i * (400/puzzleOptions.length)); setFeedback("請按順序拼出：「" + targetWord.cn + "」"); }
-        function drawPuzzle() { imageMode(CENTER); if (loadedImages[targetWord.imgName]) image(loadedImages[targetWord.imgName], width/2, 120, 150, 150); fill(80); textSize(24); text(puzzleProgress, width/2, 230); puzzleOptions.forEach(o => { if (!o.clicked) { fill(255, 175, 189); rect(o.x - 30, o.y - 30, 60, 60, 10); fill(255); text(o.char, o.x, o.y); } }); }
-        
+        function pickNewPuzzle() {
+            targetWord = random(words); puzzleProgress = "";
+            let chars = targetWord.kr.split('');
+            puzzleOptions = chars.map((char, i) => ({ char, x: 0, y: 320, clicked: false }));
+            puzzleOptions.sort(() => Math.random() - 0.5);
+            puzzleOptions.forEach((o, i) => o.x = 120 + i * (360/puzzleOptions.length));
+            setFeedback("請按順序拼出：「" + targetWord.cn + "」");
+        }
+        function drawPuzzle() {
+            image(loadedImages[targetWord.imgName], width/2, 120, 160, 160);
+            fill(80); textSize(30); text(puzzleProgress, width/2, 240);
+            puzzleOptions.forEach(o => {
+                if (!o.clicked) { fill(255, 175, 189); rect(o.x - 35, o.y - 35, 70, 70, 15); fill(255); textSize(24); text(o.char, o.x, o.y); }
+            });
+        }
+
         function mousePressed() {
-            if (mode === 1) { for (let i = drops.length - 1; i >= 0; i--) { let d = drops[i]; if (dist(mouseX, mouseY, d.x, d.y) < 40) { if (d.txt === targetWord.kr) { score += 20; if (score >= 100) triggerMegaFirework(); pickNewTarget(); } else { score = max(0, score - 10); setFeedback("再試一次！"); } drops.splice(i, 1); updateUI(); } } }
-            else if (mode === 2) {
+            if (mode === 1) {
+                drops.forEach((d, i) => { if (dist(mouseX, mouseY, d.x, d.y) < 45) { if (d.txt === targetWord.kr) { score += 20; if (score >= 100) triggerMegaFirework(); pickNewTarget(); } else { score = max(0, score - 10); setFeedback("答錯囉！"); } drops.splice(i, 1); updateUI(); } });
+            } else if (mode === 2) {
                 cards.forEach(c => {
                     if (!c.flipped && !c.matched && mouseX > c.x-50 && mouseX < c.x+50 && mouseY > c.y-60 && mouseY < c.y+60) {
-                        if (flippedCards.length < 2) {
-                            c.flipped = true;
-                            flippedCards.push(c);
-                            if (flippedCards.length === 2) setTimeout(checkMatch, 800);
-                        }
+                        if (flippedCards.length < 2) { c.flipped = true; flippedCards.push(c); if (flippedCards.length === 2) setTimeout(checkMatch, 800); }
+                    }
+                });
+            } else if (mode === 3) {
+                puzzleOptions.forEach(o => {
+                    if (!o.clicked && mouseX > o.x-35 && mouseX < o.x+35 && mouseY > o.y-35 && mouseY < o.y+35) {
+                        if (o.char === targetWord.kr[puzzleProgress.length]) { o.clicked = true; puzzleProgress += o.char; if (puzzleProgress === targetWord.kr) { score += 30; if (score >= 100) triggerMegaFirework(); setFeedback("拼對了！大發！"); setTimeout(pickNewPuzzle, 1000); } }
+                        else { score = max(0, score - 5); setFeedback("順序錯了！"); }
+                        updateUI();
                     }
                 });
             }
-            else if (mode === 3) { puzzleOptions.forEach(o => { if (!o.clicked && mouseX > o.x-30 && mouseX < o.x+30 && mouseY > o.y-30 && mouseY < o.y+30) { let expectedChar = targetWord.kr[puzzleProgress.length]; if (o.char === expectedChar) { o.clicked = true; puzzleProgress += o.char; if (puzzleProgress === targetWord.kr) { score += 25; if (score >= 100) triggerMegaFirework(); setFeedback("拼對了！"); setTimeout(pickNewPuzzle, 1000); } } else { score = max(0, score - 5); setFeedback("順序錯囉！"); } updateUI(); } }); }
         }
-        
+
         function checkMatch() {
-            // 判斷兩張卡片的 matchId 是否相同
-            if (flippedCards[0].matchId === flippedCards[1].matchId) {
-                flippedCards[0].matched = true; flippedCards[1].matched = true;
-                score += 50; if (score >= 100) triggerMegaFirework(); setFeedback("圖文配對成功！");
-            } else {
-                flippedCards[0].flipped = false; flippedCards[1].flipped = false;
-                setFeedback("配對失敗，再試一次！");
-            }
+            if (flippedCards[0].match === flippedCards[1].match) { flippedCards[0].matched = true; flippedCards[1].matched = true; score += 50; if (score >= 100) triggerMegaFirework(); setFeedback("配對成功！"); }
+            else { flippedCards[0].flipped = false; flippedCards[1].flipped = false; setFeedback("配對失敗！"); }
             flippedCards = []; updateUI();
         }
-        
+
         function updateUI() { document.getElementById('score-val').innerText = score; }
         function setFeedback(msg) { document.getElementById('game-feedback').innerText = msg; }
     </script>
